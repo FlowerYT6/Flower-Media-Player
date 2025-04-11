@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music Player</title>
+  <style>
+    body {
+      background: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    h1.logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+    .player {
+      max-width: 400px;
+      margin: auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px #000;
+    }
+    img.cover {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    h2, p {
+      margin: 5px;
+    }
+    audio {
+      width: 100%;
+      margin: 10px 0;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    #progressBar {
+      background-color: #000;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 15px;
+    }
+    .controls button {
+      background: #333;
+      border: none;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .controls button:hover {
+      background: #555;
+    }
+    .songinfo {
+      max-width: 400px;
+      margin: 30px auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px #000;
+    }
+    .artistinfo {
+      max-width: 400px;
+      margin: 30px auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px #000;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="logo">
+    <img src="https://floweryt6.github.io/assets/png/flowermediaplayer.png" alt="Logo" height="40">
+  </h1>
+
+  <div class="player">
+    <img id="coverMain" class="cover" src="" alt="Album cover">
+    <h2 id="titleMain">Track Title</h2>
+    <p id="artistMain">Artist</p>
+
+    <audio id="audio" preload="metadata"></audio>
+
+    <input type="range" id="progressBar" value="0" max="100">
+    <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.2">
+
+    <div class="controls">
+      <button onclick="prevTrack()">⬅</button>
+      <button onclick="togglePlay()">▶</button>
+      <button onclick="nextTrack()">➡️</button>
+      <button onclick="toggleShuffle()">⇆</button>
+      <button onclick="toggleRepeat()">⟳</button>
+    </div>
+  </div>
+
+  <div class="songinfo">
+    <h2 class="songinfotext">Song Metadata</h2>
+    <img id="coverInfo" class="cover" src="" alt="Album Cover">
+    <h2 id="titleInfo">Title</h2>
+    <p id="artistInfo">Artist</p>
+    <p id="albumInfo">Album</p>
+  </div>
+
+  <div class="artistinfo">
+    <h2 class="artistinfotext">About The Artist</h2>
+    <h2>ON CONSTRUCTION</h2>
+  </div>
+
+  <script>
+    const playlist = [
+      {
+        name: "c00lkidd_1 (feat. ilyhiryu) (Viral Version)",
+        artist: "77yolan and ilyhiryu",
+        file: "https://floweryt6.github.io/assets/mp3/c00lkidd_1%20(feat.%20ilyhiryu)%20(Viral%20Version).mp3",
+        cover: "https://floweryt6.github.io/assets/png/mE1VD0vV9OY-Small.png",
+        album: "c00lkidd_1"
+      },
+      {
+        name: "Song",
+        artist: "Artist",
+        file: "song2.mp3",
+        cover: "cover2.jpg",
+        album: "Album"
+      },
+      {
+        name: "Song",
+        artist: "Artist",
+        file: "song3.mp3",
+        cover: "cover3.jpg",
+        album: "Album"
+      }
+    ];
+
+    const audio = document.getElementById('audio');
+    const coverMain = document.getElementById('coverMain');
+    const titleMain = document.getElementById('titleMain');
+    const artistMain = document.getElementById('artistMain');
+
+    const coverInfo = document.getElementById('coverInfo');
+    const titleInfo = document.getElementById('titleInfo');
+    const artistInfo = document.getElementById('artistInfo');
+    const albumInfo = document.getElementById('albumInfo');
+
+    const  artistArtistInfo = document.getElementById('artistArtistInfo')
+
+    const progressBar = document.getElementById('progressBar');
+    const volumeControl = document.getElementById('volumeControl');
+
+    let currentTrack = 0;
+    let isPlaying = false;
+    let isShuffle = false;
+    let isRepeat = false;
+
+    function loadTrack(index) {
+      const track = playlist[index];
+      audio.src = track.file;
+
+      coverMain.src = track.cover;
+      titleMain.textContent = track.name;
+      artistMain.textContent = track.artist;
+
+      coverInfo.src = track.cover;
+      titleInfo.textContent = track.name;
+      artistInfo.textContent = track.artist;
+      albumInfo.textContent = track.album;
+    }
+
+    function playTrack() {
+      audio.play();
+      isPlaying = true;
+    }
+
+    function pauseTrack() {
+      audio.pause();
+      isPlaying = false;
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        pauseTrack();
+      } else {
+        playTrack();
+      }
+    }
+
+    function nextTrack() {
+      if (isShuffle) {
+        currentTrack = Math.floor(Math.random() * playlist.length);
+      } else {
+        currentTrack = (currentTrack + 1) % playlist.length;
+      }
+      loadTrack(currentTrack);
+      playTrack();
+    }
+
+    function prevTrack() {
+      currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrack);
+      playTrack();
+    }
+
+    function toggleShuffle() {
+      isShuffle = !isShuffle;
+      alert("Shuffle: " + (isShuffle ? "On" : "Off"));
+    }
+
+    function toggleRepeat() {
+      isRepeat = !isRepeat;
+      alert("Repeat: " + (isRepeat ? "On" : "Off"));
+    }
+
+    audio.addEventListener('ended', () => {
+      if (isRepeat) {
+        playTrack();
+      } else {
+        nextTrack();
+      }
+    });
+
+    volumeControl.addEventListener('input', () => {
+      audio.volume = volumeControl.value;
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      progressBar.value = (audio.currentTime / audio.duration) * 100;
+    });
+
+    progressBar.addEventListener('input', () => {
+      audio.currentTime = (progressBar.value / 100) * audio.duration;
+    });
+
+    loadTrack(currentTrack);
+  </script>
+</body>
+</html>
